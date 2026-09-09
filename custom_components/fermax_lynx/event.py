@@ -1,6 +1,6 @@
 """Only fresh, live events are eligible for automations."""
 
-from homeassistant.components.event import EventDeviceClass, EventEntity
+from homeassistant.components.event import DoorbellEventType, EventDeviceClass, EventEntity
 
 from .const import EVENT_KINDS
 from .entity import GatewayEntity
@@ -21,7 +21,7 @@ class GatewayEvent(GatewayEntity, EventEntity):
     def __init__(self, coordinator, key, panel):
         super().__init__(coordinator, key, panel)
         self.key = key
-        self._attr_event_types = ["incoming"] if key == "doorbell" else EVENT_KINDS
+        self._attr_event_types = [DoorbellEventType.RING] if key == "doorbell" else EVENT_KINDS
         if key == "doorbell":
             self._attr_device_class = EventDeviceClass.DOORBELL
 
@@ -30,10 +30,18 @@ class GatewayEvent(GatewayEntity, EventEntity):
         self.async_on_remove(self.coordinator.listen_events(self._handle))
 
     def _handle(self, event):
-        if event.get("panel_id") != self.panel["id"] or event["kind"] not in self._attr_event_types:
+        if event.get("panel_id") != self.panel["id"]:
             return
+        if self.key == "doorbell":
+            if event["kind"] != "incoming":
+                return
+            event_type = DoorbellEventType.RING
+        else:
+            if event["kind"] not in self._attr_event_types:
+                return
+            event_type = event["kind"]
         self._trigger_event(
-            event["kind"],
+            event_type,
             {"event_id": event["id"], "call_id": event.get("call_id"), "request_id": event.get("request_id")},
         )
         self.async_write_ha_state()

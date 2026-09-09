@@ -257,3 +257,33 @@ async def test_heartbeat_refreshes_clock_and_checks_identity(hass, snapshot):
     with pytest.raises(GatewayError):
         coordinator.handle("heartbeat", None, {**heartbeat, "schema": 2})
     await hass.config_entries.async_unload(entry.entry_id)
+
+
+async def test_standard_doorbell_type_and_activity(hass, snapshot, caplog):
+    from homeassistant.components.event import DoorbellEventType
+
+    entry = await setup(hass, snapshot)
+    coordinator = entry.runtime_data
+    entities = er.async_entries_for_config_entry(er.async_get(hass), entry.entry_id)
+    doorbell_id = next(entity.entity_id for entity in entities if entity.unique_id.endswith("_doorbell"))
+    activity_id = next(entity.entity_id for entity in entities if entity.unique_id.endswith("_activity"))
+    assert hass.states.get(doorbell_id).attributes["event_types"] == [DoorbellEventType.RING]
+    assert hass.states.get(doorbell_id).attributes["device_class"] == "doorbell"
+    coordinator.handle("ready", "journal:10", {})
+    coordinator.handle(
+        "event",
+        "journal:11",
+        {
+            "id": "journal:11",
+            "kind": "incoming",
+            "panel_id": "synthetic-panel",
+            "call_id": "synthetic-live-call",
+            "time": snapshot["server_time"],
+            "replayed": False,
+        },
+    )
+    await hass.async_block_till_done()
+    assert hass.states.get(doorbell_id).attributes["event_type"] == DoorbellEventType.RING
+    assert hass.states.get(activity_id).attributes["event_type"] == "incoming"
+    assert not any("ring" in record.message and record.levelname in ("WARNING", "ERROR") for record in caplog.records)
+    await hass.config_entries.async_unload(entry.entry_id)

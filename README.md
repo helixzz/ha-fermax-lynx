@@ -48,7 +48,7 @@ The camera provides periodic still images, not two-way audio or a streaming vide
 
 ## Automations and reconnect behavior
 
-The panel's **Doorbell** event entity displays the latest incoming event. For notifications, use the `fermax_lynx_doorbell` bus event below: it fires only for a fresh live doorbell, including the first one, and does not fire when HA restores an entity after startup. The **Activity** entity supports `incoming`, `outgoing`, `call_ended`, `open_manual`, `open_auto`, `open_unknown`, `open_denied`, and `control_failed`.
+The panel's **Doorbell** event entity maps incoming calls to HA's standard `ring` event type; the **Activity** entity retains the gateway's `incoming` type. For notifications, use the `fermax_lynx_doorbell` bus event below: it fires only for a fresh live doorbell, including the first one, and does not fire when HA restores an entity after startup. The **Activity** entity supports `incoming`, `outgoing`, `call_ended`, `open_manual`, `open_auto`, `open_unknown`, `open_denied`, and `control_failed`.
 
 ```yaml
 triggers:

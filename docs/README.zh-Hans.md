@@ -25,7 +25,7 @@ HTTP 仅用于可信局域网，HTTPS 证书需受信任。地址不允许携带
 
 ## 自动化与断线
 
-推荐监听 `fermax_lynx_doorbell` 总线事件，用 `entity_id` 筛选对应入口的门铃实体，见[英文手册示例](../README.md#automations-and-reconnect-behavior)。该事件支持首次来电，不会因为 HA 启动恢复实体而误触发。自行监听实体状态时，应过滤恢复和 unknown/unavailable 状态变化。
+门铃实体将呼入映射为 HA 标准 `ring` 事件，活动实体保留 `incoming` 类型。推荐监听 `fermax_lynx_doorbell` 总线事件，用 `entity_id` 筛选对应入口的门铃实体，见[英文手册示例](../README.md#automations-and-reconnect-behavior)。该事件支持首次来电，不会因为 HA 启动恢复实体而误触发。自行监听实体状态时，应过滤恢复和 unknown/unavailable 状态变化。
 
 断线时实体不可用，后台指数退避重连。历史记录仅用于推进游标，**重连或 HA 重启不会补播错过的门铃**。超过 30 秒的实时事件、重复事件 ID、同一通话的重复呼入会被忽略。HA 停机不会影响网关自己的响铃与自动开门策略。
 
