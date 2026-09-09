@@ -1,0 +1,87 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect FERMAX LYNX Gateway",
+        "description": "Generate a one-time pairing code in the gateway administrator interface. Connect over a trusted local network or HTTPS.",
+        "data": {
+          "url": "Gateway URL",
+          "code": "Pairing code"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Connect FERMAX LYNX Gateway",
+        "description": "Generate a one-time pairing code in the gateway administrator interface. Connect over a trusted local network or HTTPS.",
+        "data": {
+          "url": "Gateway URL",
+          "code": "Pairing code"
+        }
+      },
+      "reconfigure": {
+        "title": "Connect FERMAX LYNX Gateway",
+        "description": "Generate a one-time pairing code in the gateway administrator interface. Connect over a trusted local network or HTTPS.",
+        "data": {
+          "url": "Gateway URL",
+          "code": "Pairing code"
+        }
+      }
+    },
+    "error": {
+      "invalid_url": "Enter an HTTP or HTTPS origin without a path or credentials.",
+      "invalid_auth": "Pairing code is invalid or expired.",
+      "cannot_connect": "Cannot connect to the gateway.",
+      "unsupported_gateway": "Unsupported gateway API version."
+    },
+    "abort": {
+      "already_configured": "Gateway is already configured. Revoke the unused new authorization in the gateway.",
+      "wrong_gateway": "Pair the original gateway. Revoke the newly created authorization on the other gateway.",
+      "reauth_successful": "Authentication updated. You may revoke the old authorization in the gateway.",
+      "reconfigure_successful": "Configuration updated. You may revoke the old authorization in the gateway."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "incoming": {
+        "name": "Calls today"
+      },
+      "openings": {
+        "name": "Opening confirmations today"
+      },
+      "call": {
+        "name": "Current call"
+      }
+    },
+    "binary_sensor": {
+      "network": {
+        "name": "Building network"
+      },
+      "auto": {
+        "name": "Automatic opening"
+      }
+    },
+    "event": {
+      "doorbell": {
+        "name": "Doorbell"
+      },
+      "activity": {
+        "name": "Activity"
+      }
+    },
+    "button": {
+      "preview": {
+        "name": "Preview"
+      },
+      "hangup": {
+        "name": "End call"
+      },
+      "open": {
+        "name": "Request opening"
+      }
+    },
+    "camera": {
+      "camera": {
+        "name": "Current visitor"
+      }
+    }
+  }
+}

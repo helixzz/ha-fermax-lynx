@@ -1,0 +1,14 @@
+{
+  "domain": "fermax_lynx",
+  "name": "FERMAX LYNX Gateway",
+  "codeowners": [
+    "@helixzz"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/helixzz/ha-fermax-lynx",
+  "integration_type": "hub",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/helixzz/ha-fermax-lynx/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

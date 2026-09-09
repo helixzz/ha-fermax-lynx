@@ -1,0 +1,87 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "连接 FERMAX LYNX 网关",
+        "description": "在网关管理员界面生成一次性配对码。请仅通过可信局域网或 HTTPS 连接。",
+        "data": {
+          "url": "网关地址",
+          "code": "配对码"
+        }
+      },
+      "reauth_confirm": {
+        "title": "连接 FERMAX LYNX 网关",
+        "description": "在网关管理员界面生成一次性配对码。请仅通过可信局域网或 HTTPS 连接。",
+        "data": {
+          "url": "网关地址",
+          "code": "配对码"
+        }
+      },
+      "reconfigure": {
+        "title": "连接 FERMAX LYNX 网关",
+        "description": "在网关管理员界面生成一次性配对码。请仅通过可信局域网或 HTTPS 连接。",
+        "data": {
+          "url": "网关地址",
+          "code": "配对码"
+        }
+      }
+    },
+    "error": {
+      "invalid_url": "请输入有效的 HTTP 或 HTTPS 地址，不含路径或凭据。",
+      "invalid_auth": "配对码无效或已过期。",
+      "cannot_connect": "无法连接网关。",
+      "unsupported_gateway": "网关接口版本不受支持。"
+    },
+    "abort": {
+      "already_configured": "此网关已配置。请在网关中撤销刚生成但未使用的授权。",
+      "wrong_gateway": "必须配对原网关。请撤销错误网关上刚生成的授权。",
+      "reauth_successful": "已重新授权。旧授权可在网关中撤销。",
+      "reconfigure_successful": "配置已更新。旧授权可在网关中撤销。"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "incoming": {
+        "name": "今日来电"
+      },
+      "openings": {
+        "name": "今日开门确认"
+      },
+      "call": {
+        "name": "当前通话"
+      }
+    },
+    "binary_sensor": {
+      "network": {
+        "name": "门禁网络"
+      },
+      "auto": {
+        "name": "自动开门"
+      }
+    },
+    "event": {
+      "doorbell": {
+        "name": "门铃"
+      },
+      "activity": {
+        "name": "活动"
+      }
+    },
+    "button": {
+      "preview": {
+        "name": "预览"
+      },
+      "hangup": {
+        "name": "结束来访"
+      },
+      "open": {
+        "name": "请求开门"
+      }
+    },
+    "camera": {
+      "camera": {
+        "name": "当前访客"
+      }
+    }
+  }
+}
