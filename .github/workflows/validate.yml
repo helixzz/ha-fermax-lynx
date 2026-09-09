@@ -1,0 +1,30 @@
+name: Validate
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  tests:
+    strategy:
+      matrix:
+        test-plugin: ["0.13.363", "0.13.364"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: pip install pytest-homeassistant-custom-component==${{ matrix.test-plugin }} PyTurboJPEG==1.8.3 ruff==0.16.6
+      - run: ruff check .
+      - run: pytest -q
+  hassfest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: home-assistant/actions/hassfest@master
+  hacs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hacs/action@main
+        with:
+          category: integration
