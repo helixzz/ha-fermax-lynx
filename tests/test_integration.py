@@ -223,3 +223,37 @@ async def test_controls_and_camera(hass, snapshot):
             await button.async_press()
         assert control.await_count == 2  # exactly one request per press; never retried
     await hass.config_entries.async_unload(entry.entry_id)
+
+
+@pytest.mark.parametrize("wall_jump", [-86400, 86400])
+async def test_event_freshness_uses_monotonic_clock(hass, snapshot, wall_jump):
+    entry = await setup(hass, snapshot)
+    coordinator = entry.runtime_data
+    sample = snapshot["server_time"]
+    with patch("custom_components.fermax_lynx.coordinator.time.monotonic", return_value=1000):
+        coordinator.handle("snapshot", None, snapshot)
+    with (
+        patch("custom_components.fermax_lynx.coordinator.time.time", return_value=sample + wall_jump),
+        patch("custom_components.fermax_lynx.coordinator.time.monotonic", return_value=1020),
+    ):
+        assert coordinator._fresh({"time": sample})
+        assert not coordinator._fresh({"time": sample - 15})
+        assert not coordinator._fresh({"time": sample + 30})
+    await hass.config_entries.async_unload(entry.entry_id)
+
+
+async def test_heartbeat_refreshes_clock_and_checks_identity(hass, snapshot):
+    entry = await setup(hass, snapshot)
+    coordinator = entry.runtime_data
+    cursor = coordinator.cursor
+    heartbeat = {**snapshot, "server_time": snapshot["server_time"] + 100, "cursor": "journal:999"}
+    with patch("custom_components.fermax_lynx.coordinator.time.monotonic", return_value=2000):
+        coordinator.handle("heartbeat", None, heartbeat)
+        assert coordinator._fresh({"time": heartbeat["server_time"]})
+        assert not coordinator._fresh({"time": snapshot["server_time"]})
+    assert coordinator.cursor == cursor
+    with pytest.raises(AuthenticationError):
+        coordinator.handle("heartbeat", None, {**heartbeat, "gateway": {"id": "wrong-gateway"}})
+    with pytest.raises(GatewayError):
+        coordinator.handle("heartbeat", None, {**heartbeat, "schema": 2})
+    await hass.config_entries.async_unload(entry.entry_id)

@@ -30,7 +30,8 @@ class GatewayCoordinator(DataUpdateCoordinator):
         self._task = None
         self._events: list[Callable] = []
         self._live = False
-        self._clock_offset = 0.0
+        self._server_time = None
+        self._sample_mono = None
         self._seen = deque(maxlen=1024)
         self._calls = deque(maxlen=512)
 
@@ -39,6 +40,7 @@ class GatewayCoordinator(DataUpdateCoordinator):
             value = await self.client.state()
             if value["gateway"]["id"] != self.entry.unique_id:
                 raise AuthenticationError("Gateway identity changed")
+            self._sample_clock(value)
             return value
         except AuthenticationError as err:
             raise ConfigEntryAuthFailed("Pair this gateway again") from err
@@ -63,12 +65,16 @@ class GatewayCoordinator(DataUpdateCoordinator):
                 pass
             self._task = None
 
+    def _sample_clock(self, payload):
+        self._server_time = float(payload["server_time"])
+        self._sample_mono = time.monotonic()
+
     def handle(self, kind, event_id, payload):
-        if kind == "snapshot":
+        if kind in ("snapshot", "heartbeat"):
             self.client.validate_snapshot(payload)
             if payload.get("schema") != 1 or payload.get("gateway", {}).get("id") != self.entry.unique_id:
                 raise AuthenticationError("Gateway identity changed")
-            self._clock_offset = float(payload.get("server_time", time.time())) - time.time()
+            self._sample_clock(payload)
             self.async_set_updated_data(payload)
             # Snapshot cursor may be ahead of undelivered journal events.
         elif kind == "reset":
@@ -105,7 +111,9 @@ class GatewayCoordinator(DataUpdateCoordinator):
             timestamp = payload["time"]
             if isinstance(timestamp, str):
                 timestamp = datetime.fromisoformat(timestamp.replace("Z", "+00:00")).timestamp()
-            age = time.time() + self._clock_offset - float(timestamp)
+            if self._server_time is None or self._sample_mono is None:
+                return False
+            age = self._server_time + time.monotonic() - self._sample_mono - float(timestamp)
             return -5 <= age <= 30
         except KeyError, TypeError, ValueError:
             return False

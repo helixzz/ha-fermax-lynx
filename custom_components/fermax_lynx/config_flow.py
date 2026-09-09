@@ -53,7 +53,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors["base"] = "cannot_connect"
         schema = vol.Schema(
             {
-                vol.Required("url", default=entry.data["url"] if entry else "http://gateway.local:8080"): str,
+                vol.Required("url", default=entry.data["url"] if entry else "http://gateway.local:8765"): str,
                 vol.Required("code"): str,
             }
         )

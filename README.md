@@ -23,7 +23,7 @@ Copy `custom_components/fermax_lynx` from a release into `/config/custom_compone
 
 1. Open the gateway administrator interface and create a short-lived integration pairing code. Choose the permitted entry panels and permissions. State and events are required; camera, preview, end-call and opening are optional.
 2. In HA, open **Settings → Devices & services → Add integration → FERMAX LYNX Gateway**.
-3. Enter the gateway URL (for example `http://gateway.local:8080`) and pairing code.
+3. Enter the gateway URL (for example `http://gateway.local:8765`) and pairing code.
 4. HA creates a gateway device and a device for each permitted panel. The code is single-use and is not saved in HA. HA stores an independent bearer credential; revoke it from the gateway whenever needed.
 
 Use a trusted local network for HTTP, or a gateway HTTPS origin with a trusted certificate. Credentials must not be placed in the URL. Redirects are refused; use the gateway's final origin directly. This integration does not configure TLS or expose your gateway to the Internet.
